@@ -17,9 +17,9 @@
       '<div class="card"><h2>Programar uma ausência</h2>' +
       '<p class="hint">Cláusula 1.4 — até 22 dias úteis por ciclo, em no máx. 2 períodos, com 30 dias de antecedência.</p>' +
       seletorPj +
-      '<div class="grid-2"><div class="field"><label for="f-comunicacao">Data da comunicação prévia</label><input type="date" id="f-comunicacao"></div>' +
-      '<div class="field"><label for="f-inicio">Início do período</label><input type="date" id="f-inicio"></div></div>' +
-      '<div class="field"><label for="f-fim">Fim do período</label><input type="date" id="f-fim"></div>' +
+      '<div class="field"><label for="f-comunicacao">Data da comunicação prévia</label><input type="date" id="f-comunicacao"></div>' +
+      '<div class="grid-2"><div class="field"><label for="f-inicio">Início do período</label><input type="date" id="f-inicio"></div>' +
+      '<div class="field"><label for="f-fim">Fim do período</label><input type="date" id="f-fim"></div></div>' +
       '<button type="button" class="btn" id="btn-lancar" style="width:auto;">Enviar programação</button>' +
       '</div>'
     );

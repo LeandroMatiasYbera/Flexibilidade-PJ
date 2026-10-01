@@ -141,10 +141,16 @@ computador para o banco de produção, sem passar pelo GitHub.
    `.gitignore`, `.env.example`, `README.md`.
 3. **Criar conta no Render** (render.com) e conectar sua conta do GitHub.
 4. No painel do Render: **New > Blueprint**, aponte para o repositório —
-   `render.yaml` já descreve o serviço web e o banco Postgres juntos, com
+   `render.yaml` já descreve o serviço web e o banco Postgres juntos, ambos
+   no **plano gratuito** (sem precisar cadastrar forma de pagamento), com
    `JWT_SECRET` gerado automaticamente e `COOKIE_SECURE=true`. Confirme e
    aguarde o primeiro deploy (a build já roda `prisma db push` + `seed.js`
    sozinha).
+   - **Limitação do plano gratuito:** o serviço "dorme" depois de ~15 min
+     sem acesso, e o primeiro acesso seguinte demora uns 30-50s para
+     responder (ele "acorda"). Para um app interno de uso esporádico isso
+     costuma ser aceitável; se virar um problema no dia a dia, dá para
+     trocar só essa linha do `render.yaml` para um plano pago depois.
 5. **Entrar com a conta ADM de exemplo** na URL que o Render deu
    (`adm@ybera.local` / `TrocarSenha123!`) — vai pedir para trocar a senha
    no primeiro acesso. Depois, pela tela de Administração, **crie a conta

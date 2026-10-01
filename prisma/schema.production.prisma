@@ -1,0 +1,135 @@
+// Igual a schema.prisma, só com o datasource trocado para Postgres — usado
+// apenas no deploy (Render). Mantenha os dois arquivos em sincronia: qualquer
+// mudança de model aqui também precisa ir no schema.prisma (SQLite, dev
+// local) e vice-versa. Nenhum tipo usado nos models depende do banco, então
+// a cópia é só isso mesmo — datasource diferente, resto idêntico.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Perfil {
+  id          Int         @id @default(autoincrement())
+  nome        String      @unique // "ADM" | "GESTOR" | "PJ"
+  descricao   String?
+  usuarios    Usuario[]
+  permissoes  Permissao[]
+}
+
+model Permissao {
+  id             Int    @id @default(autoincrement())
+  perfilId       Int
+  perfil         Perfil @relation(fields: [perfilId], references: [id])
+  funcionalidade String
+
+  @@unique([perfilId, funcionalidade])
+}
+
+model Usuario {
+  id             Int       @id @default(autoincrement())
+  nome           String
+  email          String    @unique
+  senhaHash      String
+  perfilId       Int
+  perfil         Perfil    @relation(fields: [perfilId], references: [id])
+
+  gestorId       Int?
+  gestor         Usuario?  @relation("GestorPJ", fields: [gestorId], references: [id])
+  subordinados   Usuario[] @relation("GestorPJ")
+
+  cargo          String?
+  contratante    String?
+  dataContrato   DateTime?
+
+  ativo          Boolean   @default(true)
+  criadoEm       DateTime  @default(now())
+  ultimoAcessoEm DateTime?
+
+  loginFalhasSeguidas Int      @default(0)
+  bloqueadoAte        DateTime?
+
+  senhaProvisoria     Boolean  @default(false)
+
+  sessoes             SessaoAtiva[]
+
+  solicitacoesPJ      Solicitacao[] @relation("PJSolicitacoes")
+  aprovacoesGestor    Solicitacao[] @relation("GestorAprova")
+  decisoesAdmin       Solicitacao[] @relation("AdminDecide")
+  logs                LogAuditoria[]
+}
+
+model Feriado {
+  id          Int      @id @default(autoincrement())
+  data        DateTime
+  descricao   String
+  abrangencia String
+}
+
+model Solicitacao {
+  id                   Int       @id @default(autoincrement())
+  pjId                 Int
+  pj                   Usuario   @relation("PJSolicitacoes", fields: [pjId], references: [id])
+  gestorId             Int?
+  gestor               Usuario?  @relation("GestorAprova", fields: [gestorId], references: [id])
+
+  dataComunicacao      DateTime
+  dataInicio           DateTime
+  dataFim              DateTime
+  diasCorridos         Int
+  diasUteis            Int
+  cicloInicio          DateTime
+  cicloFim             DateTime
+  numeroPeriodo        Int
+  antecedenciaDias     Int
+  antecedenciaCumprida Boolean
+  atravessaCiclo       Boolean
+  coincide             Boolean   @default(false)
+  coincideObs          String?
+
+  status               String
+  decisaoGestor        String?
+  decisaoGestorPorId   Int?
+  decisaoGestorEm      DateTime?
+
+  decididoPorId        Int?
+  decidido             Usuario?  @relation("AdminDecide", fields: [decididoPorId], references: [id])
+  dataDecisao          DateTime?
+
+  criadoEm             DateTime  @default(now())
+}
+
+model Documento {
+  id               Int      @id @default(autoincrement())
+  titulo           String
+  categoria        String
+  ordem            Int      @default(1)
+  confidencial     Boolean  @default(false)
+  conteudoMarkdown String
+  criadoEm         DateTime @default(now())
+  atualizadoEm     DateTime @updatedAt
+}
+
+model SessaoAtiva {
+  id        String   @id
+  usuarioId Int
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  criadaEm  DateTime @default(now())
+  expiraEm  DateTime
+}
+
+model LogAuditoria {
+  id            Int      @id @default(autoincrement())
+  usuarioId     Int?
+  usuario       Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  acao          String
+  entidade      String?
+  entidadeId    String?
+  valorAnterior String?
+  valorNovo     String?
+  criadoEm      DateTime @default(now())
+}

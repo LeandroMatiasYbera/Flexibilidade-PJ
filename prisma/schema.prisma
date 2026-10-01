@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Perfis de acesso (ADM / Gestor / PJ). Tabela separada do código para
+// permitir novos perfis no futuro sem reescrever a lógica de permissões
+// (a lógica confere o campo Perfil.nome, não um enum fixo).
+model Perfil {
+  id          Int         @id @default(autoincrement())
+  nome        String      @unique // "ADM" | "GESTOR" | "PJ"
+  descricao   String?
+  usuarios    Usuario[]
+  permissoes  Permissao[]
+}
+
+// Matriz de permissões (Seção 4/11 dos requisitos) — quem pode o quê fica
+// em dados, não fixo no código. requirePermissao() (src/lib/middleware.js)
+// consulta esta tabela; um perfil novo criado no futuro só precisa de linhas
+// aqui, sem alterar a lógica de autorização.
+model Permissao {
+  id             Int    @id @default(autoincrement())
+  perfilId       Int
+  perfil         Perfil @relation(fields: [perfilId], references: [id])
+  funcionalidade String // ex.: "administracao", "dossie", "relatorios", "configuracoes", "logs", "flexibilidade.equipe", "flexibilidade.propria"
+
+  @@unique([perfilId, funcionalidade])
+}
+
+model Usuario {
+  id             Int       @id @default(autoincrement())
+  nome           String
+  email          String    @unique
+  senhaHash      String
+  perfilId       Int
+  perfil         Perfil    @relation(fields: [perfilId], references: [id])
+
+  // Associação Gestor x Usuário PJ: um gestor (outro Usuario) responsável
+  // por este usuário quando o perfil dele é PJ. Usada para filtrar
+  // automaticamente o que cada Gestor pode ver.
+  gestorId       Int?
+  gestor         Usuario?  @relation("GestorPJ", fields: [gestorId], references: [id])
+  subordinados   Usuario[] @relation("GestorPJ")
+
+  // Campos específicos de quem é Usuário PJ (perfil = PJ)
+  cargo          String?
+  contratante    String?   // "B2C" | "GYP"
+  dataContrato   DateTime?
+
+  ativo          Boolean   @default(true)
+  criadoEm       DateTime  @default(now())
+  ultimoAcessoEm DateTime?
+
+  // Controle de tentativas de login
+  loginFalhasSeguidas Int      @default(0)
+  bloqueadoAte        DateTime?
+
+  // true para toda conta criada/redefinida com a senha padrão de primeiro
+  // acesso — o usuário consegue logar, mas nenhuma rota além de
+  // trocar-senha/me/logout responde até ele definir a própria senha (ver
+  // bloquearSenhaProvisoria em src/lib/middleware.js).
+  senhaProvisoria     Boolean  @default(false)
+
+  sessoes             SessaoAtiva[]
+
+  solicitacoesPJ      Solicitacao[] @relation("PJSolicitacoes")
+  aprovacoesGestor    Solicitacao[] @relation("GestorAprova")
+  decisoesAdmin       Solicitacao[] @relation("AdminDecide")
+  logs                LogAuditoria[]
+}
+
+model Feriado {
+  id          Int      @id @default(autoincrement())
+  data        DateTime
+  descricao   String
+  abrangencia String // Nacional | Estadual | Municipal | Recesso interno
+}
+
+// Solicitação de flexibilidade (Cláusula 1.4) — fluxo em duas etapas:
+// PendenteGestor -> PendenteAdmin -> Aprovado | Reprovado
+// (ou ReprovadoGestor se o gestor reprovar antes de chegar ao admin)
+model Solicitacao {
+  id                   Int       @id @default(autoincrement())
+  pjId                 Int
+  pj                   Usuario   @relation("PJSolicitacoes", fields: [pjId], references: [id])
+  gestorId             Int?
+  gestor               Usuario?  @relation("GestorAprova", fields: [gestorId], references: [id])
+
+  dataComunicacao      DateTime
+  dataInicio           DateTime
+  dataFim              DateTime
+  diasCorridos         Int
+  diasUteis            Int
+  cicloInicio          DateTime
+  cicloFim             DateTime
+  numeroPeriodo        Int
+  antecedenciaDias     Int
+  antecedenciaCumprida Boolean
+  atravessaCiclo       Boolean
+  coincide             Boolean   @default(false)
+  coincideObs          String?
+
+  status               String    // PendenteGestor | PendenteAdmin | Aprovado | Reprovado | ReprovadoGestor
+  decisaoGestor        String?
+  decisaoGestorPorId   Int?
+  decisaoGestorEm      DateTime?
+
+  decididoPorId        Int?
+  decidido             Usuario?  @relation("AdminDecide", fields: [decididoPorId], references: [id])
+  dataDecisao          DateTime?
+
+  criadoEm             DateTime  @default(now())
+}
+
+// Documentos do Dossiê PJ (acesso exclusivo ao perfil ADM).
+model Documento {
+  id               Int      @id @default(autoincrement())
+  titulo           String
+  categoria        String   // metodologia | auditorias | analises | resumos | ferramentas
+  ordem            Int      @default(1)
+  confidencial     Boolean  @default(false)
+  conteudoMarkdown String
+  criadoEm         DateTime @default(now())
+  atualizadoEm     DateTime @updatedAt
+}
+
+// Sessão de login ativa — o JWT carrega só o id desta linha (`jti`);
+// requireAuth confirma que ela ainda existe e não expirou a cada requisição.
+// Logout apaga SÓ esta linha (derruba um dispositivo). Troca de senha apaga
+// TODAS as linhas do usuário (derruba todos os dispositivos, como pedido nos
+// requisitos) e cria uma nova só para quem trocou, para ele continuar logado.
+model SessaoAtiva {
+  id        String   @id
+  usuarioId Int
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  criadaEm  DateTime @default(now())
+  expiraEm  DateTime
+}
+
+// Log de auditoria — append-only, visível só ao ADM.
+model LogAuditoria {
+  id            Int      @id @default(autoincrement())
+  usuarioId     Int?
+  usuario       Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  acao          String
+  entidade      String?
+  entidadeId    String?
+  valorAnterior String?
+  valorNovo     String?
+  criadoEm      DateTime @default(now())
+}

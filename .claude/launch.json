@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "portal-pj",
+      "runtimeExecutable": "C:\\Users\\YBG-NTB-007\\tools\\node-v22.11.0-win-x64\\node.exe",
+      "runtimeArgs": ["src/server.js"],
+      "port": 3000
+    }
+  ]
+}

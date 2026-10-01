@@ -1,0 +1,13 @@
+node_modules/
+.env
+prisma/dev.db
+prisma/dev.db-journal
+*.log
+logs/
+prisma/credenciais-importadas.csv
+
+# Dados reais de pessoas (nomes, e-mails pessoais) — nunca sobem para o
+# GitHub, nem em repositório privado. Rode estes scripts localmente, direto
+# contra o banco de produção (ver "Produção (Render)" no README.md).
+prisma/import-real-data.js
+prisma/normalizar-senhas-importadas.js

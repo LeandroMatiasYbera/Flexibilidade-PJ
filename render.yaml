@@ -1,0 +1,30 @@
+# Blueprint do Render — cria o serviço web e o Postgres juntos.
+# No painel do Render: New > Blueprint > aponte para este repositório.
+# Depois do primeiro deploy, veja "Produção (Render)" no README.md para os
+# passos manuais (criar o ADM real, importar os dados reais de PJs).
+databases:
+  - name: portal-pj-db
+    plan: free
+
+services:
+  - type: web
+    name: portal-pj
+    runtime: node
+    plan: starter
+    buildCommand: npm install && npx prisma generate --schema=prisma/schema.production.prisma && npx prisma db push --schema=prisma/schema.production.prisma && node prisma/seed.js
+    startCommand: node src/server.js
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: portal-pj-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: SENHA_PADRAO_PRIMEIRO_ACESSO
+        value: "TrocarSenha123!"
+      - key: LOGIN_MAX_ATTEMPTS
+        value: "5"
+      - key: LOGIN_WINDOW_MINUTES
+        value: "15"

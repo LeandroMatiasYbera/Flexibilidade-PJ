@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portal PJ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+</head>
+<body>
+  <!-- Bloqueio real: nada abaixo é renderizado até /api/auth/me confirmar a
+       sessão (ver js/app.js). Este "gate" some só depois da checagem no
+       servidor responder, nunca antes. -->
+  <div id="gate" class="login-wrap"><div class="empty" style="background:var(--surface);"><div class="big">Verificando acesso…</div>Confirmando sua sessão no Portal PJ.</div></div>
+
+  <div class="shell" id="shell" style="display:none;">
+    <aside class="sidebar">
+      <div class="brand">Portal PJ</div>
+      <div class="whoami" id="whoami"></div>
+      <nav id="nav"></nav>
+      <div class="foot">
+        <button type="button" class="linklike" id="btn-sair">Sair</button>
+      </div>
+    </aside>
+    <main class="main" id="main"></main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/lib/flex-helpers.js"></script>
+  <script src="/js/pages/dashboard.js"></script>
+  <script src="/js/pages/flexibilidade.js"></script>
+  <script src="/js/pages/equipe.js"></script>
+  <script src="/js/pages/solicitacoes.js"></script>
+  <script src="/js/pages/minhasSolicitacoes.js"></script>
+  <script src="/js/pages/historico.js"></script>
+  <script src="/js/pages/relatorios.js"></script>
+  <script src="/js/pages/dossie.js"></script>
+  <script src="/js/pages/admin.js"></script>
+  <script src="/js/pages/perfil.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

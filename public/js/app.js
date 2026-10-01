@@ -57,6 +57,21 @@
     ],
   };
 
+  // Ícones de linha (SVG inline, sem dependência externa) para cada item do
+  // menu — "currentColor" herda a cor do link, inclusive no estado ativo.
+  var ICONES = {
+    dashboard: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10.5V20h12v-9.5"/></svg>',
+    flexibilidade: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3.5v4M16 3.5v4"/></svg>',
+    dossie: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z"/><path d="M14 3.5V8h4M9 13h6M9 16.5h6"/></svg>',
+    admin: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 13.5a7.4 7.4 0 0 0 0-3l1.6-1.2-1.5-2.6-1.9.6a7.5 7.5 0 0 0-2.6-1.5L16.6 3h-3l-.4 2.3a7.5 7.5 0 0 0-2.6 1.5l-1.9-.6-1.5 2.6 1.6 1.2a7.4 7.4 0 0 0 0 3L6.6 15l1.5 2.6 1.9-.6a7.5 7.5 0 0 0 2.6 1.5l.4 2.3h3l.4-2.3a7.5 7.5 0 0 0 2.6-1.5l1.9.6 1.5-2.6Z"/></svg>',
+    relatorios: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M4 20h16"/></svg>',
+    equipe: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 19a4.2 4.2 0 0 1 5-4"/></svg>',
+    solicitacoes: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h3.5l1.5 2.5h6L16.5 12H20"/><path d="M5 12 6.3 5.6A1 1 0 0 1 7.3 5h9.4a1 1 0 0 1 1 .6L19 12v6a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-6Z"/></svg>',
+    "minhas-solicitacoes": '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h3.5l1.5 2.5h6L16.5 12H20"/><path d="M5 12 6.3 5.6A1 1 0 0 1 7.3 5h9.4a1 1 0 0 1 1 .6L19 12v6a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-6Z"/></svg>',
+    historico: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>',
+    perfil: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3"/><path d="M5.5 19a6.5 6.5 0 0 1 13 0"/></svg>',
+  };
+
   function itensPermitidos(){
     var base = MENUS[eu.perfil] || [];
     return base.filter(function(it){
@@ -81,7 +96,8 @@
     var itens = itensPermitidos();
     var nav = document.getElementById("nav");
     nav.innerHTML = itens.map(function(it){
-      return '<a href="#' + it.hash + '" data-hash="' + it.hash + '">' + it.label + '</a>';
+      var icone = ICONES[it.hash] || "";
+      return '<a href="#' + it.hash + '" data-hash="' + it.hash + '">' + icone + '<span>' + it.label + '</span></a>';
     }).join("");
     document.getElementById("whoami").innerHTML =
       "<b></b><span></span>";

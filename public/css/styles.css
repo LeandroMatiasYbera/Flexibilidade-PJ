@@ -1,16 +1,20 @@
 :root{
-  --bg:#F6F7F4;
+  /* Paleta institucional Ybera Group (Brand Guidelines 2025): preto e
+     branco — #333133 é o "95% Black" oficial da marca. Os tons de aviso/
+     erro/sucesso abaixo são semânticos (status da aplicação), não cores de
+     marca, e por isso seguem a convenção usual da web (âmbar/vermelho/verde). */
+  --bg:#F5F5F4;
   --surface:#FFFFFF;
-  --surface-2:#EEF1EC;
-  --surface-3:#E3E9E1;
-  --border:#DCE2D9;
-  --text:#1C241D;
-  --text-muted:#5B6B5E;
-  --text-faint:#8B988C;
-  --accent:#33604A;
-  --accent-strong:#254636;
-  --accent-soft:#E4EEE6;
-  --accent-contrast:#FBFDFA;
+  --surface-2:#EEEEED;
+  --surface-3:#E2E2E1;
+  --border:#DADAD9;
+  --text:#333133;
+  --text-muted:#6A6A69;
+  --text-faint:#9C9B9A;
+  --accent:#333133;
+  --accent-strong:#000000;
+  --accent-soft:#ECECEB;
+  --accent-contrast:#FFFFFF;
   --warn-bg:#FFF4E1;
   --warn-text:#7A4E00;
   --warn-border:#F0C77B;
@@ -20,7 +24,7 @@
   --success-bg:#E7F3EA;
   --success-text:#22693C;
   --success-border:#B4DBC0;
-  --shadow: 0 1px 2px rgba(28,36,29,0.06), 0 6px 20px -8px rgba(28,36,29,0.12);
+  --shadow: 0 1px 2px rgba(0,0,0,0.06), 0 6px 20px -8px rgba(0,0,0,0.14);
   color-scheme: light;
 }
 *{ box-sizing:border-box; }
@@ -33,7 +37,10 @@ body{
   font-size:14px;
   line-height:1.5;
 }
-h1,h2,h3{ font-family:'Fraunces',Georgia,serif; font-weight:600; margin:0; }
+/* Tipografia principal da marca é "Linear Grotesk" (títulos/impacto); como é
+   uma fonte comercial não disponível para uso neste projeto, usamos Archivo
+   como substituta livre de perfil equivalente (grotesca, contemporânea). */
+h1,h2,h3{ font-family:'Archivo',system-ui,-apple-system,sans-serif; font-weight:700; margin:0; }
 .mono{ font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums; }
 a{ color:var(--accent-strong); }
 button{ font:inherit; }
@@ -92,7 +99,7 @@ input:focus,select:focus,textarea:focus,button:focus-visible{ outline:2px solid 
   width:230px; flex-shrink:0; background:var(--surface); border-right:1px solid var(--border);
   padding:20px 14px; display:flex; flex-direction:column; gap:4px;
 }
-.sidebar .brand{ font-family:'Fraunces',serif; font-weight:600; font-size:17px; padding:0 10px 18px; }
+.sidebar .brand{ font-family:'Archivo',sans-serif; font-weight:700; font-size:17px; padding:0 10px 18px; }
 .sidebar nav{ display:flex; flex-direction:column; gap:2px; flex:1; }
 .sidebar a{
   display:block; padding:9px 10px; border-radius:8px; color:var(--text-muted); text-decoration:none; font-size:13.5px; font-weight:600;
@@ -115,7 +122,7 @@ input:focus,select:focus,textarea:focus,button:focus-visible{ outline:2px solid 
 
 .stat-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:18px; }
 .stat{ background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow); }
-.stat .num{ font-family:'Fraunces',serif; font-size:24px; font-weight:600; }
+.stat .num{ font-family:'Archivo',sans-serif; font-size:24px; font-weight:700; }
 .stat .label{ color:var(--text-muted); font-size:11.5px; margin-top:2px; }
 
 .badge{ display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:3px 9px; border-radius:99px; border:1px solid transparent; white-space:nowrap; }
@@ -135,7 +142,7 @@ tbody tr:last-child td{ border-bottom:none; }
 @media (max-width:720px){ .grid-2,.grid-3{ grid-template-columns:1fr; } .shell{ flex-direction:column; } .sidebar{ width:100%; flex-direction:row; overflow-x:auto; } .sidebar nav{ flex-direction:row; } }
 
 .empty{ border:1.5px dashed var(--border); border-radius:12px; padding:28px 20px; text-align:center; color:var(--text-muted); font-size:13px; }
-.empty .big{ font-family:'Fraunces',serif; font-size:15px; color:var(--text); margin-bottom:6px; font-weight:600; }
+.empty .big{ font-family:'Archivo',sans-serif; font-size:15px; color:var(--text); margin-bottom:6px; font-weight:700; }
 
 .toast{
   position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
@@ -145,7 +152,7 @@ tbody tr:last-child td{ border-bottom:none; }
 }
 .toast.show{ opacity:1; }
 
-.modal-backdrop{ position:fixed; inset:0; background:rgba(28,36,29,.45); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
+.modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
 .modal-backdrop.show{ display:flex; }
 .modal{ background:var(--surface); border-radius:14px; padding:22px; max-width:420px; width:100%; box-shadow:var(--shadow); }
 .modal h3{ font-size:16px; margin-bottom:12px; }
